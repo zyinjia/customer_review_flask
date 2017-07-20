@@ -172,7 +172,7 @@ def make_fig_reviews(topics, reviews, review_num, output):
 
 
 def get_reviews(path='./data/iphone6.csv'):
-    from bag_of_words import *
+    from bag_of_words import get_data
     df_train = get_data(path)
     topic_num = 10
     max_features = 2000
