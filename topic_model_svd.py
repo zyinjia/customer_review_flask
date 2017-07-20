@@ -45,7 +45,7 @@ def find_review_in_topics(d, train_features_normalized, df_train, num=20, minwor
         max_ind_list.append(max_ind)
         reviews.append( (df_train.loc[df_train.index[max_ind], 'Product_name'],
                          df_train.loc[df_train.index[max_ind], 'Reviews']) )
-        print 'topic %d: review %d, similarity %f' %(j, max_ind, max_sim)
+        #print 'topic %d: review %d, similarity %f' %(j, max_ind, max_sim)
     return max_sim_list, max_ind_list, reviews
 
 
@@ -203,7 +203,7 @@ def get_reviews(path='./data/iphone6.csv'):
 
 if __name__ == "__main__":
     print get_reviews()
-    
+
     '''
     topics = {}
     for j in range(topic_num):
