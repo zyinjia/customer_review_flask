@@ -33,7 +33,7 @@ def split_df(df, train_size=20000, test_size=2000, predict_size=2000):
     randomly select the training dataset, test dataset and predict dataset
     df: the complete pandas.dataframe
     '''
-    indices = random.sample(df.index, 
+    indices = random.sample(df.index,
                             train_size + test_size + predict_size)
     df_select = df.ix[indices]
     df_train = df_select[:train_size]
@@ -55,7 +55,6 @@ def get_train_features_bw(reviews_train, vectorizer):
     '''
     train_features = vectorizer.fit_transform(reviews_train)
     train_features = train_features.toarray()
-    #vocab = vectorizer.get_feature_names() #get vocabulary
     return train_features
 
 

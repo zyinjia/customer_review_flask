@@ -19,17 +19,12 @@ def index():
         from bokeh.plotting import figure
         from bokeh.embed import components
         from api_data import get_data
+        from topic_model_svd import get_reviews
 
-        df = get_data(product)
-        p = figure(title='Data from Quandle WIKI set',
-                   x_axis_label='Date',
-                   x_axis_type='datetime',
-                   y_axis_label='Open Price ($)',
-                   toolbar_sticky=False)
-        p.circle(df['datetime'], df['open'])
-        script, div = components(p)
+        path='./data/iphone6.csv'
+        reviews = get_reviews(path)
 
-        return render_template('plot.html', script=script, div=div, ticker=product)
+        return render_template('plot.html', reviews=reviews)
 
 
 if __name__ == '__main__':
