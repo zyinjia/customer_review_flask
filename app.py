@@ -13,14 +13,14 @@ def index():
     if request.method == 'GET':
         return render_template('index.html')
     else:
-        app.vars['name'] = request.form['ticker']
+        product = request.form.get('product')
 
         import datetime
         from bokeh.plotting import figure
         from bokeh.embed import components
         from api_data import get_data
 
-        df = get_data(app.vars['name'])
+        df = get_data(product)
         p = figure(title='Data from Quandle WIKI set',
                    x_axis_label='Date',
                    x_axis_type='datetime',
@@ -29,7 +29,7 @@ def index():
         p.circle(df['datetime'], df['open'])
         script, div = components(p)
 
-        return render_template('plot.html', script=script, div=div, ticker=app.vars['name'])
+        return render_template('plot.html', script=script, div=div, ticker=product)
 
 
 if __name__ == '__main__':
