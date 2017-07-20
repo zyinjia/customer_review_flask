@@ -1,6 +1,5 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import normalize
-import nltk
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -10,11 +9,9 @@ import random
 def filter_word(vocab):
     f = open('stop_words.txt', 'r')
     mystop = f.readlines()[0].split()
-    exclude_tag = set(['RB', 'EX', 'IN', 'DT', 'CC', 'MD', 'RP'])
-    tags = nltk.pos_tag(vocab)
     select_indices = []
     for i in range(len(vocab)):
-        if (tags[i][1] not in exclude_tag) and (vocab[i] not in mystop):
+        if vocab[i] not in mystop:
             select_indices.append(i)
     return [vocab[i] for i in select_indices]
 
@@ -205,42 +202,15 @@ def get_reviews(path='./data/iphone6.csv'):
     return reviews
 
 if __name__ == "__main__":
-    from bag_of_words import *
-
-    df_train = get_data('./data/iphone6.csv')
-    #df_train, df_test, df_predict = split_df(df, 200000, 2000, 2000)
-    topic_num = 10
-    max_features = 2000
-
-    # Get the full vocabulary
-    vectorizer = CountVectorizer(analyzer = "word",   \
-                                 tokenizer = None,    \
-                                 preprocessor = None, \
-                                 stop_words = None,   \
-                                 max_features = max_features+2000)
-    train_features = get_train_features_bw(df_train.Reviews_bw, vectorizer)
-    vocab = vectorizer.get_feature_names()
-
-    vocab_clean = filter_word(vocab)
-    vectorizer2 = CountVectorizer(analyzer = "word",   \
-                                  tokenizer = None,    \
-                                  preprocessor = None, \
-                                  stop_words = None,   \
-                                  vocabulary= vocab_clean,
-                                  max_features = max_features)
-    train_features = vectorizer2.transform(df_train.Reviews_bw)
-    train_features = train_features.toarray()
-    train_features_normalized = normalize(train_features, norm='l2', axis=1)
-    t, s, d = np.linalg.svd(train_features_normalized, full_matrices=False)
-
-    max_sim_list, max_ind_list, reviews = find_review_in_topics(d, train_features_normalized, df_train, num=topic_num)
-
+    print get_reviews()
+    
+    '''
     topics = {}
     for j in range(topic_num):
         topics[j] = get_topic(d[j], vocab_clean)
 
     top_words = get_top_words(topics, vocab_clean)
-
+    '''
     # plot
     #make_fig_topics(topics, top_words, s, 'topic_model_blu.svg')
     #make_fig_topics_trans(topics, top_words, s, 'topic_model_blu_trans.svg')
@@ -253,5 +223,5 @@ if __name__ == "__main__":
         cnt += 1
     f.close()
     '''
-    print reviews
-    make_fig_reviews(topics, reviews, review_num=15, output='./topic_model_review_blu.svg')
+    #print reviews
+    #make_fig_reviews(topics, reviews, review_num=15, output='./topic_model_review_blu.svg')

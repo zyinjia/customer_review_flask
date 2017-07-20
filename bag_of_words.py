@@ -1,17 +1,11 @@
-from nltk.corpus import stopwords # Import the stop word list
+from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
 from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 import numpy as np
 import re
 import random
 
-
-stopwords = stopwords.words("english")
-stopwds = set(stopwords)
-stopwds.discard('no')
-stopwds.discard('not')
-stopwds.discard('nor')
-
+stopwords = ENGLISH_STOP_WORDS
 
 def get_data(path='./data_bagofwords/data.csv'):
     df = pd.read_csv(path, encoding='utf-8')
