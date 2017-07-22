@@ -5,7 +5,7 @@ import numpy as np
 import re
 import random
 
-stopwords = ENGLISH_STOP_WORDS
+stopwds = ENGLISH_STOP_WORDS
 
 def get_data(path='./data_bagofwords/data.csv'):
     df = pd.read_csv(path, encoding='utf-8')
