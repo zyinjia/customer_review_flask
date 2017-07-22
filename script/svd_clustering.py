@@ -36,16 +36,16 @@ t, s, d = svds(bw_matrix, k=50)
 km = KMeans(n_clusters=topic_num)
 km.fit(t)
 topics = km.labels_.tolist()
-df['topics'] = topics
+df['topic'] = topics
 #print df['topics'].value_counts()
 
-grouped = df['Rating'].groupby(df['topics'])
+grouped = df['Rating'].groupby(df['topic'])
 #print grouped.mean()
 
 print "Top terms per cluster:"
 #sort cluster centers by proximity to centroid
 order_centroids = km.cluster_centers_.argsort()[:, ::-1]
-review_group = df['Reviews'].groupby(df['topics'])
+review_group = df['Reviews'].groupby(df['topic'])
 
 for i in range(topic_num):
     print "\nCluster %d words:" % i
