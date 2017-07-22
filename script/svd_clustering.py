@@ -28,7 +28,7 @@ bw_matrix = vectorizer.fit_transform(df.Reviews_bw)
 bw_matrix = TfidfTransformer(norm='l2', use_idf=False).fit_transform(bw_matrix)
 vocab = vectorizer.get_feature_names()
 
-t, s, d = svds(bw_matrix, k=30)
+t, s, d = svds(bw_matrix, k=50)
 
 #print bw_matrix.shape
 #print d.shape
@@ -49,7 +49,9 @@ review_group = df['Reviews'].groupby(df['topics'])
 
 for i in range(topic_num):
     print "\nCluster %d words:" % i
-    for ind in order_centroids[i, :5]: #replace 6 with n words per cluster
-        print vocab[ind],
+    for ind in order_centroids[i, :2]: #replace 5 with n words per cluster
+        print ind
+        base = get_new_base(d[ind], vocab, cutoff=0.3)
+        print [item[1] for item in base]
 
 #print topics

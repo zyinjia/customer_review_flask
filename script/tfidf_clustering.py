@@ -5,6 +5,8 @@ sys.path.append('..')
 from bag_of_words import *
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.manifold import MDS
 
 topic_num = 20
 df = get_data(path='../data/iphone6.csv')
@@ -42,3 +44,9 @@ for i in range(topic_num):
     #print "Cluster %d review:" % i
     #for review in review_group.get_group(i):
     #    print '%s' % review
+
+dist = 1 - cosine_similarity(tfidf_matrix)
+MDS()
+mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
+pos = mds.fit_transform(dist)
+xs, ys = pos[:, 0], pos[:, 1]
