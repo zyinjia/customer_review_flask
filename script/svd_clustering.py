@@ -11,7 +11,7 @@ from scipy.sparse.linalg import svds
 from sklearn.cluster import KMeans
 import numpy as np
 
-topic_num = 20
+topic_num = 10
 df = get_data(path='../data/iphone6.csv')
 
 f = open('stop_words.txt', 'r')
@@ -40,7 +40,7 @@ df['topic'] = topics
 #print df['topics'].value_counts()
 
 grouped = df['Rating'].groupby(df['topic'])
-#print grouped.mean()
+print grouped.mean()
 
 print "Top terms per cluster:"
 #sort cluster centers by proximity to centroid
@@ -53,5 +53,9 @@ for i in range(topic_num):
         print ind
         base = get_new_base(d[ind], vocab, cutoff=0.3)
         print [item[1] for item in base]
+    distances = km.transform(t)[:, i]
+    review_indices = np.argsort(distances)[::][:5] #get the closest 5 reviews
+    for rindex in review_indices:
+        print df.iloc[rindex]['Reviews']
 
 #print topics
