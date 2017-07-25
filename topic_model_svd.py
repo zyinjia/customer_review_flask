@@ -1,5 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import normalize
+from scipy.sparse import csr_matrix
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -23,48 +24,51 @@ def vec_dir(vec):
         return False #negative
 
 
-def find_review_in_topics(d, train_features_normalized, df_train, num=20, minwords=3):
+def find_review_in_topics(d, features_normalized, df_train, reviews_num=3, topic_num=20, minwords=3):
     '''
     reviews: a list of tuples, the tuple is product_name (string) + review (string)
     '''
-    max_sim_list = []
-    max_ind_list = []
     reviews = []
-    for j in range(num):
+    for j in range(topic_num):
         topic_vec = d[j]
-        if not vec_dir(topic_vec):
-            topic_vec = -topic_vec
-        max_sim = -float('inf')
-        max_ind = 0
-        for i in range(train_features_normalized.shape[0]):
-            sim = np.dot(train_features_normalized[i], topic_vec)
-            if sim > max_sim and len(df_train.loc[df_train.index[i],'Reviews'].split()) > minwords:
-                max_sim = sim
-                max_ind = i
-        max_sim_list.append(max_sim)
-        max_ind_list.append(max_ind)
-        reviews.append( (df_train.loc[df_train.index[max_ind], 'Product_name'],
-                         df_train.loc[df_train.index[max_ind], 'Reviews']) )
-        #print 'topic %d: review %d, similarity %f' %(j, max_ind, max_sim)
-    return max_sim_list, max_ind_list, reviews
-
-
-def get_relavant_reviews(max_ind_list, df_train):
-    reviews = []
-    for i in max_ind_list:
-        reviews.append( (df_train.loc[df_train.index[i], 'Product_name'],
-                         df_train.loc[df_train.index[i], 'Reviews']) )
+        if j == 1:
+            print max(d[j])
+            print max(-d[j])
+        select = get_relavant_reviews(topic_vec,
+                                      features_normalized,
+                                      df_train,
+                                      reviews_num=reviews_num,
+                                      minwords=minwords)
+        reviews.append(select)
     return reviews
 
+def get_relavant_reviews(topic_vec, features_normalized, df_train, reviews_num=3, minwords=3):
+    if not vec_dir(topic_vec):
+        topic_vec = -topic_vec
+    sim_vec = csr_matrix(topic_vec).dot(np.transpose(features_normalized))
+    sim_sort = sim_vec.toarray().reshape(-1).argsort()[::-1]
+    select = []
+    r = 0
+    while len(select)<reviews_num:
+        index = sim_sort[r]
+        #print sim_vec.toarray().reshape(-1)[index] #similarity
+        review = df_train.loc[df_train.index[index],'Reviews']
+        if len(review.split()) > minwords:
+            select.append(review)
+        r += 1
+    return select
 
-def get_topic(vec, vocab, cutoff=0.2):
+
+def get_new_base(topic_vec, vocab, cutoff=0.2):
     '''
     return a list of tuples: each tuple contains the coefficient of the word, and the string of the word
     '''
     word_list = []
-    for i in range(len(vec)):
-        if abs(vec[i])>cutoff:
-            word_list.append( (vec[i], vocab[i]) )
+    if not vec_dir(topic_vec):
+        topic_vec = -topic_vec
+    for i in range(len(topic_vec)):
+        if topic_vec[i]>cutoff:
+            word_list.append( (topic_vec[i], vocab[i]) )
     return word_list
 
 
@@ -80,7 +84,6 @@ def get_top_words(topics, vocab):
             else:
                 continue
     return top_words
-
 
 def make_fig_topics_trans(topics, top_words, eigenvalues, output):
     fig = plt.figure(figsize=(10, 10))

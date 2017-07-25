@@ -8,18 +8,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import normalize
 from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS
 from scipy.sparse.linalg import svds
-from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.cluster import KMeans
 from sklearn.cluster import k_means_
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-
-
-def new_euclidean_distances(X, Y=None, Y_norm_squared=None, squared=False):
-    return np.dot(Y, np.transpose(X))
-
-# monkey patch (ensure cosine dist function is used)
-k_means_.euclidean_distances = new_euclidean_distances
-print 'a'
 
 
 topic_num = 6
@@ -51,34 +43,45 @@ km = KMeans(n_clusters=topic_num)
 km.fit(t)
 topics = km.labels_.tolist()
 df['topic'] = topics
-#print df['topics'].value_counts()
+review_cnt = df['topic'].value_counts().tolist()
 
 grouped = df['Rating'].groupby(df['topic'])
-print grouped.mean()
+stars = grouped.mean().tolist()
 
 print "Top terms per cluster:"
 #sort cluster centers by proximity to centroid
 order_centroids = km.cluster_centers_.argsort()[:, ::-1]
-review_group = df['Reviews'].groupby(df['topic'])
 minwords = 2
 
+select_reviews = []
+topic_words = []
 for i in range(topic_num):
     print "\nCluster %d words:" % i
-    for ind in order_centroids[i, :3]: #replace 5 with n words per cluster
+    words = []
+    for ind in order_centroids[i, :3]:
         print ind, km.cluster_centers_[i, ind]
         base = get_new_base(d[ind], vocab, cutoff=0.2)
-        print sorted(base, reverse=True)
+        words.extend([item[1] for item in sorted(base, reverse=True)])
+    topic_words.append(", ".join(words[:5]))
     distances = km.transform(t)[:, i]
     review_sort = np.argsort(distances)[::]
-    ##get the closest 5 reviews with length > minwords
+    ##get the closest 3 reviews with length > minwords
     reviews = []
     r = 0
-    while len(reviews)<5:
+    while len(reviews)<3:
         index = review_sort[r]
         review = df.loc[index, 'Reviews']
         if len(review.split()) > minwords:
             reviews.append(review)
         r += 1
-    print reviews
+    select_reviews.append("\n\n".join(reviews))
 
-#print topics
+select_df = pd.DataFrame({
+    'Topic': topic_words,
+    'StarRating': ['%0.1f' %star for star in stars],
+    'ReviewNum': review_cnt,
+    'Reviews': select_reviews
+    })
+print select_df
+
+select_df.to_csv('../html_data/iphone6.csv')

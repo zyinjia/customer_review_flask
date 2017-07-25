@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import re
 import random
+import spacy
 
 stopwds = ENGLISH_STOP_WORDS
 
@@ -13,6 +14,11 @@ def get_data(path='./data_bagofwords/data.csv'):
     df = df[df.Reviews_bw.notnull()]
     return df
 
+def get_noun_text(text):
+    nlp = spacy.load('en')
+    doc = nlp(text)
+    nouns = set(['NN', 'NNP', 'NNS', 'NNPS'])
+    return " ".join([word.text for word in doc if word.tag_ in nouns])
 
 def clean_text(text):
     text = text.decode('utf-8').lower()
