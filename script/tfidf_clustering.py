@@ -45,12 +45,21 @@ print "Top terms per cluster:"
 #sort cluster centers by proximity to centroid
 order_centroids = cluster_method.cluster_centers_.argsort()[:, ::-1]
 review_group = df['Reviews'].groupby(df['topic'])
-
+minwords = 3
 for i in range(topic_num):
     print "\nCluster %d words:" % i
-    for ind in order_centroids[i, :5]: #replace 5 with n words per cluster
+    for ind in order_centroids[i, :2]: #replace 5 with n words per cluster
         print vocab[ind],
+
+    ##get the closest 5 reviews with length > minwords
     distances = cluster_method.transform(tfidf_matrix)[:, i]
-    review_indices = np.argsort(distances)[::][:5] #get the closest 5 reviews
-    for rindex in review_indices:
-        print df.iloc[rindex]['Reviews']
+    review_sort = np.argsort(distances)[::]
+    reviews = []
+    r = 0
+    while len(reviews)<5:
+        index = review_sort[r]
+        review = df.loc[index, 'Reviews']
+        if len(review.split()) > minwords:
+            reviews.append(review)
+        r += 1
+    print reviews
