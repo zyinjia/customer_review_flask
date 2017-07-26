@@ -11,8 +11,10 @@ from sklearn.preprocessing import normalize
 from scipy.sparse.linalg import svds
 from scipy.sparse import csr_matrix
 import numpy as np
+import pickle
 
-topic_num = 10
+
+topic_num = 5
 df = get_data(path='../data/iphone6.csv')
 #reviews_bw = df['Reviews_bw'].tolist()
 #reviews_bw = [get_noun_text(text) for text in reviews_bw]
@@ -36,7 +38,13 @@ t, s, d = svds(bw_matrix, k=50) #d is ndarray
 
 reviews = find_review_in_topics(d, bw_matrix, df, reviews_num=3, topic_num=topic_num, minwords=3)
 
+topics = {}
 for i in range(topic_num):
-    print i
-    print get_new_base(d[i], vocab, cutoff=0.2)
+    topics[i] = get_new_base(d[i], vocab, cutoff=0.2)
     print reviews[i]
+
+make_fig_topics(topics, s, './iphone6.svg')
+
+f = open('../html_data/iphone6.pickle', 'w')
+pickle.dump([topics, s], f)
+f.close()

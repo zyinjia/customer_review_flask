@@ -1,12 +1,61 @@
 <html>
-<title>Stock Plot</title>
+<title>Phone reviews</title>
+
   <head>
     <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.6.min.css" type="text/css" />
     <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.6.min.js"></script>
+    {{ plot_script | safe }}
+    <style>
+        div.container {width: 100%; border: 1px solid gray;}
+
+        header, footer {
+            padding: 1em;
+            color: white;
+            background-color: black;
+            clear: left;
+            text-align: center;
+            }
+
+        span.page {float:right;
+                   width: 60%;
+                   margin-left: 170px;
+                   padding: lem; overflow: hidden;
+                   display:inline-block;
+                    }
+
+        span.figure{
+            float: left;
+            width: 40%;
+            margin: 0;
+            padding: 1em;
+            }
+    </style>
   </head>
+
   <body>
-    <div class=page>
-      <h1> {{reviews}} </h1>
-    </div>
+    <div class=container>
+
+      <header><h1> {{product}} </h1></header>
+
+      <table width = "100%" border = "0">
+        <tr valign = "top">
+            <td bgcolor = "white" width = "40%">
+                 {{ plot_div | safe }}
+            </td>
+
+            <td bgcolor = "white" width = "60%" margin-left="1">
+              {% for topic in topics %}
+                <h3> Topic {{topic.TopicIndex}} ({{ topic.StarRating }} out of 5 stars):
+                  {{ topic.Topic }} </h3>
+                  <ul>
+                    {% for review in topic.Reviews %}
+                      <li>{{ review }}</li>
+                    {% endfor %}
+                  </ul>
+              {% endfor %}
+            </td>
+          </tr>
+      </table>
+  </div>
   </body>
 </html>
