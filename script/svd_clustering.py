@@ -82,6 +82,5 @@ select_df = pd.DataFrame({
     'ReviewNum': review_cnt,
     'Reviews': select_reviews
     })
-print select_df
 
 select_df.to_csv('../html_data/iphone6.csv')
