@@ -3,4 +3,4 @@ numpy
 pandas
 bokeh
 pickle
-matplotlib
+scikit-learn
