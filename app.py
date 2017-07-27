@@ -35,8 +35,7 @@ def index():
                                 product = product,
                                 topics=topics,
                                 plot_script=plot_script,
-                                plot_div=plot_div, )
-
+                                plot_div=plot_div )
 
 if __name__ == '__main__':
     app.run(debug=True)
