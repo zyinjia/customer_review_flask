@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, make_response, json
 
+
 app = Flask(__name__)
 
 app.vars = {}
@@ -15,11 +16,8 @@ def index():
     else:
         product = request.form.get('product')
 
-        import datetime
-        from bokeh.plotting import figure
         from bokeh.embed import components
-        from topic_model_svd import get_reviews
-        from bag_of_words import get_data
+        from svd_plot import plot_bokeh, get_plotsvd_data
         import pandas as pd
 
         path='./html_data/iphone6.csv'
@@ -29,9 +27,15 @@ def index():
         for item in topics:
             item['Reviews'] = [ review for review in item['Reviews'].split("\n\n")]
 
+        svd_topic, svd_s = get_plotsvd_data('./html_data/iphone6.pickle' )
+        p = plot_bokeh(svd_topic, svd_s)
+        plot_script, plot_div = components(p)
+
         return render_template('plot.html',
                                 product = product,
-                                topics=topics)
+                                topics=topics,
+                                plot_script=plot_script,
+                                plot_div=plot_div, )
 
 
 if __name__ == '__main__':

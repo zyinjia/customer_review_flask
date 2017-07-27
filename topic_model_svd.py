@@ -31,9 +31,6 @@ def find_review_in_topics(d, features_normalized, df_train, reviews_num=3, topic
     reviews = []
     for j in range(topic_num):
         topic_vec = d[j]
-        if j == 1:
-            print max(d[j])
-            print max(-d[j])
         select = get_relavant_reviews(topic_vec,
                                       features_normalized,
                                       df_train,
@@ -72,7 +69,7 @@ def get_new_base(topic_vec, vocab, cutoff=0.2):
     return word_list
 
 
-def get_top_words(topics, vocab):
+def get_top_words(topics):
     '''
     return a list of key words
     '''
@@ -85,7 +82,8 @@ def get_top_words(topics, vocab):
                 continue
     return top_words
 
-def make_fig_topics_trans(topics, top_words, eigenvalues, output):
+def make_fig_topics_trans(topics, eigenvalues, output):
+    top_words = get_top_words(topics)
     fig = plt.figure(figsize=(10, 10))
     ax = plt.subplot(111)
     ax.grid(color='grey', linestyle='-', linewidth=0.5)
@@ -118,8 +116,9 @@ def make_fig_topics_trans(topics, top_words, eigenvalues, output):
     ax.invert_yaxis()
     fig.savefig( output )
 
-def make_fig_topics(topics, top_words, eigenvalues, output):
-    fig = plt.figure(figsize=(8, 8))
+def make_fig_topics(topics, eigenvalues, output=False):
+    top_words = get_top_words(topics)
+    fig = plt.figure(figsize=(6, 6))
     ax = plt.subplot(111)
     ax.grid(color='grey', linestyle='-', linewidth=0.5)
 
@@ -133,7 +132,7 @@ def make_fig_topics(topics, top_words, eigenvalues, output):
             radi = item[0]
             X.append(x)
             Y.append(top_words.index(word))
-            S.append(np.pi*abs(radi)**2*200)
+            S.append(np.pi*abs(radi)**2*500)
             C.append(eigenvalues[x])
 
     ax.scatter(X, Y, s=S,
@@ -143,13 +142,16 @@ def make_fig_topics(topics, top_words, eigenvalues, output):
     ax.xaxis.tick_top()
     ax.set_xlim(-1, topic_num)
     ax.set_xticks(range(topic_num))
-    ax.set_xticklabels(['topic%d' %i for i in range(topic_num)], rotation=40, ha='center')
+    ax.set_xticklabels(['Topic%d' %i for i in range(topic_num)], rotation=40, ha='center')
 
     ax.set_ylim(-1,word_num)
     ax.set_yticks(range(word_num))
     ax.set_yticklabels([top_words[i] for i in range(word_num)])
     ax.invert_yaxis()
-    fig.savefig( output )
+    fig.tight_layout()
+    if output:
+        fig.savefig( output )
+    return fig
 
 
 def make_fig_reviews(topics, reviews, review_num, output):
