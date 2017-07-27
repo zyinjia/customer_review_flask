@@ -2,7 +2,6 @@ from bokeh.plotting import figure
 from bokeh.models import Range1d
 from bokeh.embed import components
 from bokeh.models import FixedTicker, FuncTickFormatter
-import matplotlib.pyplot as plt
 import pickle
 import numpy as np
 
