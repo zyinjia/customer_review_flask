@@ -35,6 +35,7 @@ bw_matrix = normalize(bw_matrix, norm='l2')
 vocab = vectorizer.get_feature_names()
 
 t, s, d = svds(bw_matrix, k=20)
+#t, s, d = np.linalg.svd(bw_matrix.toarray(), full_matrices=False) #d is ndarray
 
 #print bw_matrix.shape
 #print d.shape
@@ -62,6 +63,7 @@ for i in range(topic_num):
         print ind, km.cluster_centers_[i, ind]
         base = get_new_base(d[ind], vocab, cutoff=0.2)
         words.extend([item[1] for item in sorted(base, reverse=True)])
+    print words
     topic_words.append(", ".join(words[:5]))
     distances = km.transform(t)[:, i]
     review_sort = np.argsort(distances)[::]
@@ -73,6 +75,7 @@ for i in range(topic_num):
         review = df.loc[index, 'Reviews']
         if len(review.split()) > minwords:
             reviews.append(review)
+            print review
         r += 1
     select_reviews.append("\n\n".join(reviews))
 

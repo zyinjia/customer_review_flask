@@ -14,7 +14,7 @@ import numpy as np
 import pickle
 
 
-topic_num = 5
+topic_num = 20
 df = get_data(path='../data/iphone6.csv')
 #reviews_bw = df['Reviews_bw'].tolist()
 #reviews_bw = [get_noun_text(text) for text in reviews_bw]
@@ -34,13 +34,14 @@ bw_matrix = vectorizer.fit_transform(df.Reviews_bw)
 bw_matrix = normalize(bw_matrix, norm='l2') #bw_matrix is a np sparse matrix
 vocab = vectorizer.get_feature_names()
 
-t, s, d = svds(bw_matrix, k=50) #d is ndarray
+t, s, d = np.linalg.svd(bw_matrix.toarray(), full_matrices=False) #d is ndarray
 
 reviews = find_review_in_topics(d, bw_matrix, df, reviews_num=3, topic_num=topic_num, minwords=3)
 
 topics = {}
 for i in range(topic_num):
     topics[i] = get_new_base(d[i], vocab, cutoff=0.2)
+    print topics[i]
     print reviews[i]
 
 make_fig_topics(topics, s, './iphone6.svg')
